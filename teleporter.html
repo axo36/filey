@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILEY - Téléporteur</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .teleporter-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .teleporter-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .teleporter-hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .teleporter-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .teleporter-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .access-check {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .access-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .access-denied {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--danger);
+        }
+        
+        .access-denied .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            display: none;
+        }
+        
+        .upload-section.show {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0, 217, 255, 0.02);
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--accent);
+            background: rgba(0, 217, 255, 0.05);
+        }
+        
+        .drop-zone.dragover {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .drop-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .files-list {
+            margin-top: 2rem;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.3s;
+        }
+        
+        .file-item:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+        
+        .file-icon {
+            font-size: 1.8rem;
+        }
+        
+        .file-details {
+            flex: 1;
+        }
+        
+        .file-name {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        
+        .file-size {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .btn-remove-file {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-remove-file:hover {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--danger);
+        }
+        
+        .upload-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .progress-section {
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .progress-section.show {
+            display: block;
+        }
+        
+        .progress-bar-container {
+            background: var(--bg-hover);
+            border-radius: 10px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-dark);
+            font-weight: 700;
+        }
+        
+        .success-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--success);
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .success-message .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="teleporter-container">
+        <div class="teleporter-hero">
+            <div class="logo">FILEY</div>
+            <h1 id="teleporterName">Chargement...</h1>
+            <p id="teleporterDescription" style="color: var(--text-secondary); margin-top: 1rem;"></p>
+            <div class="teleporter-meta" id="teleporterMeta" style="display: none;">
+                <div class="teleporter-meta-item">
+                    <span>📅</span>
+                    <span id="createdDate">-</span>
+                </div>
+                <div class="teleporter-meta-item">
+                    <span>🎯</span>
+                    <span id="targetCount">0 clients</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ACCESS CHECK -->
+        <div class="access-check" id="accessCheck">
+            <h3 style="margin-bottom: 1rem; text-align: center;">Entrez votre code d'accès</h3>
+            <div class="access-input-group">
+                <input type="text" id="accessCode" placeholder="Ex: 2546" class="input-field" style="flex: 1;">
+                <button class="btn-primary" onclick="checkAccess()">
+                    <span>Valider</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- ACCESS DENIED -->
+        <div class="access-denied" id="accessDenied" style="display: none;">
+            <div class="icon">🚫</div>
+            <h3>Accès refusé</h3>
+            <p style="margin-top: 1rem;">Votre code ne vous donne pas accès à ce téléporteur.</p>
+            <button class="btn-secondary" onclick="retryAccess()" style="margin-top: 1.5rem;">
+                <span>Réessayer</span>
+            </button>
+        </div>
+        
+        <!-- UPLOAD SECTION -->
+        <div class="upload-section" id="uploadSection">
+            <h3 style="margin-bottom: 1.5rem; text-align: center;">Déposer vos fichiers</h3>
+            
+            <div class="drop-zone" id="dropZone">
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <div class="drop-icon">📤</div>
+                <p style="color: var(--accent); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                    Glissez vos fichiers ici ou cliquez pour parcourir
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Tous types de fichiers acceptés
+                </p>
+            </div>
+            
+            <div class="files-list" id="filesList"></div>
+            
+            <div class="upload-actions" id="uploadActions" style="display: none;">
+                <button class="btn-secondary" onclick="clearFiles()">
+                    <span>Effacer tout</span>
+                </button>
+                <button class="btn-primary" onclick="uploadFiles()">
+                    <span class="icon">🚀</span>
+                    <span>Téléporter les fichiers</span>
+                </button>
+            </div>
+            
+            <div class="progress-section" id="progressSection">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar">0%</div>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);" id="progressText">
+                    Téléportation en cours...
+                </p>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <div class="icon">✅</div>
+                <h3>Fichiers téléportés avec succès !</h3>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">
+                    Vos fichiers ont été envoyés vers les clients ciblés.
+                </p>
+                <button class="btn-primary" onclick="resetUpload()" style="margin-top: 1.5rem;">
+                    <span>Envoyer d'autres fichiers</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://aziwyqlpcgkpcgkpcgkpcqjkv.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_wRtZ50ROcD0VPxjZBO3sbg_WvDTNs_e";
+        const TELEPORTERS_TABLE = "teleporters";
+        const UPLOADS_TABLE = "uploads";
+        const STORAGE_BUCKET = "files";
+        
+        let currentTeleporter = null;
+        let userCode = null;
+        let selectedFiles = [];
+        
+        // Get teleporter ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const teleporterId = urlParams.get('id');
+        
+        if (!teleporterId) {
+            document.body.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--danger);">❌ ID de téléporteur invalide</div>';
+        } else {
+            loadTeleporter();
+        }
+        
+        // ===== LOAD TELEPORTER =====
+        async function loadTeleporter() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TELEPORTERS_TABLE}?id=eq.${teleporterId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
+                    }
+                });
+                
+                const data = await response.json();
+                if (!data || data.length === 0) {
+                    throw new Error('Téléporteur non trouvé');
+                }
+                
+                currentTeleporter = data[0];
+                
+                // Update UI
+                document.getElementById('teleporterName').textContent = currentTeleporter.name;
+                document.getElementById('teleporterDescription').textContent = currentTeleporter.description || '';
+                
+                const created = new Date(currentTeleporter.created_at);
+                document.getElementById('createdDate').textContent = created.toLocaleDateString('fr-FR');
+                
+                const targetCodes = JSON.parse(currentTeleporter.target_codes || '[]');
+                document.getElementById('targetCount').textContent = `${targetCodes.length} client(s)`;
+                
+                document.getElementById('teleporterMeta').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('❌ Erreur chargement téléporteur:', error);
+                document.body.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--danger);">❌ Erreur de chargement</div>';
+            }
+        }
+        
+        // ===== CHECK ACCESS =====
+        function checkAccess() {
+            const code = document.getElementById('accessCode').value.trim();
+            
+            if (!code) {
+                alert('❌ Veuillez entrer un code');
+                return;
+            }
+            
+            const targetCodes = JSON.parse(currentTeleporter.target_codes || '[]');
+            
+            if (targetCodes.includes(code)) {
+                userCode = code;
+                document.getElementById('accessCheck').style.display = 'none';
+                document.getElementById('uploadSection').classList.add('show');
+            } else {
+                document.getElementById('accessCheck').style.display = 'none';
+                document.getElementById('accessDenied').style.display = 'block';
+            }
+        }
+        
+        // ===== RETRY ACCESS =====
+        function retryAccess() {
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('accessCheck').style.display = 'block';
+            document.getElementById('accessCode').value = '';
+        }
+        
+        // ===== FILE HANDLING =====
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        function handleFiles(files) {
+            selectedFiles = [...selectedFiles, ...Array.from(files)];
+            updateFilesList();
+        }
+        
+        function updateFilesList() {
+            const list = document.getElementById('filesList');
+            const actions = document.getElementById('uploadActions');
+            
+            if (selectedFiles.length === 0) {
+                list.innerHTML = '';
+                actions.style.display = 'none';
+                return;
+            }
+            
+            list.innerHTML = selectedFiles.map((file, index) => {
+                const sizeKB = (file.size / 1024).toFixed(2);
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                const sizeText = file.size < 1024 * 1024 ? `${sizeKB} KB` : `${sizeMB} MB`;
+                
+                return `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">📄</div>
+                            <div class="file-details">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${sizeText}</div>
+                            </div>
+                        </div>
+                        <button class="btn-remove-file" onclick="removeFile(${index})">✕</button>
+                    </div>
+                `;
+            }).join('');
+            
+            actions.style.display = 'flex';
+        }
+        
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFilesList();
+        }
+        
+        function clearFiles() {
+            selectedFiles = [];
+            fileInput.value = '';
+            updateFilesList();
+        }
+        
+        // ===== UPLOAD FILES =====
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) return;
+            
+            document.getElementById('uploadActions').style.display = 'none';
+            document.getElementById('progressSection').classList.add('show');
+            
+            const totalFiles = selectedFiles.length;
+            let uploadedCount = 0;
+            
+            for (const file of selectedFiles) {
+                try {
+                    // Upload to storage
+                    const timestamp = Date.now();
+                    const cleanName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
+                    const filename = `${timestamp}_${cleanName}`;
+                    
+                    const storageResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filename}`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'apikey': SUPABASE_KEY
+                        },
+                        body: file
+                    });
+                    
+                    if (!storageResponse.ok) {
+                        throw new Error('Erreur upload storage');
+                    }
+                    
+                    const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${filename}`;
+                    
+                    // Save to database
+                    const uploadData = {
+                        filename: file.name,
+                        file_url: fileUrl,
+                        teleporter_id: teleporterId,
+                        client_code: userCode,
+                        status: "en_attente"
+                    };
+                    
+                    await fetch(`${SUPABASE_URL}/rest/v1/${UPLOADS_TABLE}`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${SUPABASE_KEY}`,
+                            "apikey": SUPABASE_KEY
+                        },
+                        body: JSON.stringify(uploadData)
+                    });
+                    
+                    uploadedCount++;
+                    const progress = Math.round((uploadedCount / totalFiles) * 100);
+                    document.getElementById('progressBar').style.width = progress + '%';
+                    document.getElementById('progressBar').textContent = progress + '%';
+                    
+                } catch (error) {
+                    console.error('❌ Erreur upload fichier:', file.name, error);
+                }
+            }
+            
+            document.getElementById('progressSection').classList.remove('show');
+            document.getElementById('successMessage').classList.add('show');
+        }
+        
+        // ===== RESET UPLOAD =====
+        function resetUpload() {
+            selectedFiles = [];
+            fileInput.value = '';
+            updateFilesList();
+            document.getElementById('successMessage').classList.remove('show');
+            document.getElementById('uploadActions').style.display = 'none';
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressBar').textContent = '0%';
+        }
+        
+        // Enter key to check access
+        document.getElementById('accessCode').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAccess();
+            }
+        });
+    </script>
+</body>
+</html>
