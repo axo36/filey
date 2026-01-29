@@ -4,557 +4,869 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FILEY - Téléporteur</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .teleporter-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 0 2rem;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .teleporter-hero {
-            text-align: center;
-            margin-bottom: 3rem;
+
+        body {
+            background: #0a0e27;
+            color: #00d4ff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
-        
-        .teleporter-hero h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent), var(--success));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        .teleporter-meta {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1.5rem;
-            color: var(--text-secondary);
-        }
-        
-        .teleporter-meta-item {
+
+        .header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 30px;
+            margin-bottom: 40px;
         }
-        
-        .access-check {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+
+        .btn-back {
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
-        
-        .access-input-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+
+        .btn-back:hover {
+            background: #00d4ff;
+            color: #0a0e27;
         }
-        
-        .access-denied {
-            background: rgba(255, 51, 102, 0.1);
-            border: 1px solid var(--danger);
-            border-radius: 15px;
-            padding: 2rem;
+
+        h1 {
             text-align: center;
-            color: var(--danger);
+            font-size: 4em;
+            color: #00d4ff;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px #00d4ff;
+            flex: 1;
         }
-        
-        .access-denied .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        .upload-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            display: none;
-        }
-        
-        .upload-section.show {
-            display: block;
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .drop-zone {
-            border: 2px dashed var(--border);
+
+        .teleporter-info {
+            border: 2px solid #00d4ff;
             border-radius: 15px;
-            padding: 3rem 2rem;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(0, 212, 255, 0.03);
+            text-align: center;
+        }
+
+        .teleporter-name {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        .target-codes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .code-badge {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
+            color: #10b981;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .main-box {
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .section-box {
+            border: 1px solid #00d4ff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background: rgba(0, 212, 255, 0.02);
+        }
+
+        .section-title {
+            color: #00d4ff;
+            font-size: 1.3em;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #00d4ff;
+            border-radius: 8px;
+            padding: 50px 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: rgba(0, 217, 255, 0.02);
+            background: rgba(0, 212, 255, 0.01);
         }
-        
+
         .drop-zone:hover {
-            border-color: var(--accent);
-            background: rgba(0, 217, 255, 0.05);
+            background: rgba(0, 212, 255, 0.08);
         }
-        
-        .drop-zone.dragover {
-            border-color: var(--success);
-            background: rgba(0, 255, 136, 0.1);
-            transform: scale(1.02);
+
+        .drop-zone input {
+            display: none;
         }
-        
-        .drop-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+
+        .drop-text {
+            color: #00d4ff;
+            font-size: 1.1em;
         }
-        
-        .files-list {
-            margin-top: 2rem;
+
+        .files-container,
+        .execution-file-container {
+            margin-top: 15px;
         }
-        
+
         .file-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg-hover);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.8rem;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .file-item-name {
+            color: #00d4ff;
+            font-size: 1em;
+            flex: 1;
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0 5px;
             transition: all 0.3s;
         }
-        
-        .file-item:hover {
-            border-color: var(--accent);
-            transform: translateX(5px);
+
+        .btn-remove:hover {
+            color: #ff0000;
+            font-weight: bold;
         }
-        
-        .file-info {
+
+        .path-section {
+            margin-top: 20px;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            flex: 1;
+            gap: 20px;
         }
-        
-        .file-icon {
-            font-size: 1.8rem;
-        }
-        
-        .file-details {
-            flex: 1;
-        }
-        
-        .file-name {
-            color: var(--text-primary);
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-        }
-        
-        .file-size {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-        
-        .btn-remove-file {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--danger);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-remove-file:hover {
-            background: rgba(255, 51, 102, 0.1);
-            border-color: var(--danger);
-        }
-        
-        .upload-actions {
+
+        .checkbox-group {
             display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4ff;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
+            transition: all 0.3s;
+            font-size: 0.8em;
         }
-        
-        .progress-section {
-            margin-top: 2rem;
-            display: none;
+
+        .checkbox-custom:hover {
+            box-shadow: 0 0 10px #00d4ff;
         }
-        
-        .progress-section.show {
-            display: block;
+
+        .checkbox-custom.checked {
+            background: #00d4ff;
+            color: #0a0e27;
+            font-weight: bold;
         }
-        
-        .progress-bar-container {
-            background: var(--bg-hover);
-            border-radius: 10px;
-            height: 40px;
-            overflow: hidden;
+
+        .checkbox-label {
+            color: #00d4ff;
+            font-size: 1.1em;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .path-input-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .path-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .path-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00d4ff;
+        }
+
+        .path-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-browse {
+            padding: 12px 20px;
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.3em;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-browse:hover:not(:disabled) {
+            background: #00d4ff;
+            color: #0a0e27;
+            box-shadow: 0 0 15px #00d4ff;
+        }
+
+        .btn-browse:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-valider {
+            padding: 12px 35px;
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .btn-valider:hover {
+            background: #00d4ff;
+            color: #0a0e27;
+            box-shadow: 0 0 20px #00d4ff;
+        }
+
+        .history-box {
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 40px;
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .history-title {
+            color: #00d4ff;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .history-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.02);
+            border-left: 3px solid #00d4ff;
+            border-radius: 5px;
             position: relative;
         }
-        
-        .progress-bar {
-            background: linear-gradient(90deg, var(--accent), var(--success));
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s;
+
+        .folder-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 100px;
+        }
+
+        .folder-icon {
+            font-size: 3.5em;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            color: #00d4ff;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .execution-info {
+            color: #00a8cc;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .destination-info {
+            color: #00a8cc;
+            font-size: 0.85em;
+        }
+
+        .target-code-info {
+            color: #10b981;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .error-message {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            border-radius: 5px;
+            color: #ff6b6b;
+            font-size: 0.9em;
+        }
+
+        .status-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .status-line {
+            color: #f59e0b;
+            font-size: 0.95em;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: var(--bg-dark);
-            font-weight: 700;
+            gap: 8px;
         }
-        
-        .success-message {
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--success);
-            border-radius: 15px;
-            padding: 2rem;
+
+        .status-line.success {
+            color: #10b981;
+        }
+
+        .status-line.pending {
+            color: #f59e0b;
+        }
+
+        .status-line.error {
+            color: #ff6b6b;
+        }
+
+        .btn-delete-file {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete-file:hover {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .empty {
             text-align: center;
-            color: var(--success);
-            margin-top: 2rem;
-            display: none;
-        }
-        
-        .success-message.show {
-            display: block;
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .success-message .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            color: #00a8cc;
+            padding: 40px;
         }
     </style>
 </head>
 <body>
-    <div class="teleporter-container">
-        <div class="teleporter-hero">
-            <div class="logo">FILEY</div>
-            <h1 id="teleporterName">Chargement...</h1>
-            <p id="teleporterDescription" style="color: var(--text-secondary); margin-top: 1rem;"></p>
-            <div class="teleporter-meta" id="teleporterMeta" style="display: none;">
-                <div class="teleporter-meta-item">
-                    <span>📅</span>
-                    <span id="createdDate">-</span>
+    <div class="container">
+        <div class="header">
+            <a href="menu.html" class="btn-back">← retour</a>
+            <h1>FILEY</h1>
+        </div>
+
+        <div class="teleporter-info">
+            <div class="teleporter-name" id="teleporterName">Téléporteur</div>
+            <div style="font-size: 1.2em; color: #00a8cc;">Codes cibles :</div>
+            <div class="target-codes" id="targetCodes"></div>
+        </div>
+        
+        <div class="main-box">
+            <!-- DEPOSER FICHIER -->
+            <div class="section-box">
+                <div class="section-title">Déposer un fichier</div>
+                <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" multiple>
+                    <div class="drop-text">Glisse des fichiers ici ou clique</div>
                 </div>
-                <div class="teleporter-meta-item">
-                    <span>🎯</span>
-                    <span id="targetCount">0 clients</span>
+                <div id="filesContainer" class="files-container"></div>
+            </div>
+            
+            <!-- CHOISIR FICHIER A EXECUTER -->
+            <div class="section-box">
+                <div class="section-title">Choisir le fichier à exécuter</div>
+                <div class="drop-zone" onclick="document.getElementById('fileToExecuteInput').click()">
+                    <input type="file" id="fileToExecuteInput">
+                    <div class="drop-text">Glisse un fichier ici ou clique</div>
+                </div>
+                <div id="executionFileContainer" class="execution-file-container"></div>
+            </div>
+            
+            <!-- CREER UN DOSSIER PERSONNALISE -->
+            <div class="section-box">
+                <div class="path-section">
+                    <div class="checkbox-group">
+                        <div class="checkbox-custom" id="folderCheckbox" onclick="toggleFolderCheckbox()"></div>
+                        <label class="checkbox-label" onclick="toggleFolderCheckbox()">Créer dans un dossier</label>
+                    </div>
+                    <div class="path-input-container">
+                        <input type="text" class="path-input" id="folderName" placeholder="Nom du dossier" disabled>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CHEMIN TELEPORTATION -->
+            <div class="section-box">
+                <div class="path-section">
+                    <div class="checkbox-group">
+                        <div class="checkbox-custom" id="checkbox" onclick="toggleCheckbox()"></div>
+                        <label class="checkbox-label" onclick="toggleCheckbox()">Chemin de téléportation</label>
+                    </div>
+                    <div class="path-input-container">
+                        <input type="text" class="path-input" id="filepath" placeholder="Cliquez sur 🗂️ pour parcourir" disabled>
+                        <button class="btn-browse" id="browseBtn" onclick="openExplorer()" disabled title="Ouvrir l'explorateur">🗂️</button>
+                        <button class="btn-valider" onclick="validerTeleportation()">Valider</button>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- ACCESS CHECK -->
-        <div class="access-check" id="accessCheck">
-            <h3 style="margin-bottom: 1rem; text-align: center;">Entrez votre code d'accès</h3>
-            <div class="access-input-group">
-                <input type="text" id="accessCode" placeholder="Ex: 2546" class="input-field" style="flex: 1;">
-                <button class="btn-primary" onclick="checkAccess()">
-                    <span>Valider</span>
-                </button>
-            </div>
-        </div>
-        
-        <!-- ACCESS DENIED -->
-        <div class="access-denied" id="accessDenied" style="display: none;">
-            <div class="icon">🚫</div>
-            <h3>Accès refusé</h3>
-            <p style="margin-top: 1rem;">Votre code ne vous donne pas accès à ce téléporteur.</p>
-            <button class="btn-secondary" onclick="retryAccess()" style="margin-top: 1.5rem;">
-                <span>Réessayer</span>
-            </button>
-        </div>
-        
-        <!-- UPLOAD SECTION -->
-        <div class="upload-section" id="uploadSection">
-            <h3 style="margin-bottom: 1.5rem; text-align: center;">Déposer vos fichiers</h3>
-            
-            <div class="drop-zone" id="dropZone">
-                <input type="file" id="fileInput" multiple style="display: none;">
-                <div class="drop-icon">📤</div>
-                <p style="color: var(--accent); font-size: 1.1rem; margin-bottom: 0.5rem;">
-                    Glissez vos fichiers ici ou cliquez pour parcourir
-                </p>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    Tous types de fichiers acceptés
-                </p>
-            </div>
-            
-            <div class="files-list" id="filesList"></div>
-            
-            <div class="upload-actions" id="uploadActions" style="display: none;">
-                <button class="btn-secondary" onclick="clearFiles()">
-                    <span>Effacer tout</span>
-                </button>
-                <button class="btn-primary" onclick="uploadFiles()">
-                    <span class="icon">🚀</span>
-                    <span>Téléporter les fichiers</span>
-                </button>
-            </div>
-            
-            <div class="progress-section" id="progressSection">
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progressBar">0%</div>
-                </div>
-                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);" id="progressText">
-                    Téléportation en cours...
-                </p>
-            </div>
-            
-            <div class="success-message" id="successMessage">
-                <div class="icon">✅</div>
-                <h3>Fichiers téléportés avec succès !</h3>
-                <p style="margin-top: 1rem; color: var(--text-secondary);">
-                    Vos fichiers ont été envoyés vers les clients ciblés.
-                </p>
-                <button class="btn-primary" onclick="resetUpload()" style="margin-top: 1.5rem;">
-                    <span>Envoyer d'autres fichiers</span>
-                </button>
+        <!-- HISTORIQUE -->
+        <div class="history-box">
+            <div class="history-title">📂 Historique</div>
+            <div id="historyContainer" class="history-items">
+                <div class="empty">Aucun fichier pour l'instant</div>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://aziwyqlpcgkpcgkpcgkpcqjkv.supabase.co";
+        // CONFIG SUPABASE
+        const SUPABASE_URL = "https://aziwyqlpcgkpcgpcqjkv.supabase.co";
         const SUPABASE_KEY = "sb_publishable_wRtZ50ROcD0VPxjZBO3sbg_WvDTNs_e";
-        const TELEPORTERS_TABLE = "teleporters";
-        const UPLOADS_TABLE = "uploads";
         const STORAGE_BUCKET = "files";
-        
-        let currentTeleporter = null;
-        let userCode = null;
-        let selectedFiles = [];
-        
-        // Get teleporter ID from URL
+        const JOBS_TABLE = "teleporter_jobs";
+        const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}`;
+        const JOBS_URL = `${SUPABASE_URL}/rest/v1/${JOBS_TABLE}`;
+
+        // RECUPERER PARAMETRES URL
         const urlParams = new URLSearchParams(window.location.search);
         const teleporterId = urlParams.get('id');
-        
-        if (!teleporterId) {
-            document.body.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--danger);">❌ ID de téléporteur invalide</div>';
-        } else {
-            loadTeleporter();
+        const teleporterName = decodeURIComponent(urlParams.get('name') || 'Téléporteur');
+        const targetCodes = JSON.parse(decodeURIComponent(urlParams.get('codes') || '[]'));
+
+        document.getElementById('teleporterName').textContent = teleporterName;
+        document.getElementById('targetCodes').innerHTML = targetCodes.map(code => 
+            `<span class="code-badge">${code}</span>`
+        ).join('');
+
+        // VARIABLES
+        let selectedFiles = [];
+        let fileToExecute = null;
+        let checkboxChecked = false;
+        let folderCheckboxChecked = false;
+
+        // GESTION FICHIERS À DÉPOSER
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...newFiles];
+            updateFilesDisplay();
+        });
+
+        function updateFilesDisplay() {
+            const container = document.getElementById('filesContainer');
+            if (selectedFiles.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            container.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <span class="file-item-name">📄 ${file.name}</span>
+                    <button class="btn-remove" onclick="removeFile(${index})">✕</button>
+                </div>
+            `).join('');
         }
-        
-        // ===== LOAD TELEPORTER =====
-        async function loadTeleporter() {
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFilesDisplay();
+        }
+
+        // GESTION FICHIER À EXÉCUTER
+        document.getElementById('fileToExecuteInput').addEventListener('change', function(e) {
+            fileToExecute = e.target.files[0];
+            updateExecutionFileDisplay();
+        });
+
+        function updateExecutionFileDisplay() {
+            const container = document.getElementById('executionFileContainer');
+            if (!fileToExecute) {
+                container.innerHTML = '';
+                return;
+            }
+            container.innerHTML = `
+                <div class="file-item">
+                    <span class="file-item-name">⚙️ ${fileToExecute.name}</span>
+                    <button class="btn-remove" onclick="removeExecutionFile()">✕</button>
+                </div>
+            `;
+        }
+
+        function removeExecutionFile() {
+            fileToExecute = null;
+            document.getElementById('fileToExecuteInput').value = '';
+            updateExecutionFileDisplay();
+        }
+
+        // CHECKBOX DOSSIER
+        function toggleFolderCheckbox() {
+            folderCheckboxChecked = !folderCheckboxChecked;
+            const checkbox = document.getElementById('folderCheckbox');
+            const folderName = document.getElementById('folderName');
+            
+            if (folderCheckboxChecked) {
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+                folderName.disabled = false;
+                folderName.focus();
+            } else {
+                checkbox.classList.remove('checked');
+                checkbox.textContent = '';
+                folderName.disabled = true;
+                folderName.value = '';
+            }
+        }
+
+        // CHECKBOX CHEMIN
+        function toggleCheckbox() {
+            checkboxChecked = !checkboxChecked;
+            const checkbox = document.getElementById('checkbox');
+            const filepath = document.getElementById('filepath');
+            const browseBtn = document.getElementById('browseBtn');
+            
+            if (checkboxChecked) {
+                checkbox.classList.add('checked');
+                checkbox.textContent = '✓';
+                filepath.disabled = false;
+                browseBtn.disabled = false;
+            } else {
+                checkbox.classList.remove('checked');
+                checkbox.textContent = '';
+                filepath.disabled = true;
+                browseBtn.disabled = true;
+                filepath.value = '';
+            }
+        }
+
+        // OUVRIR EXPLORATEUR
+        function openExplorer() {
+            window.open('explorer.html', 'FileyExplorer', 'width=900,height=700,resizable=yes,scrollbars=yes');
+        }
+
+        // UPLOAD FICHIER
+        async function uploadFileToStorage(file) {
+            const timestamp = Date.now();
+            const cleanName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
+            const filename = `${timestamp}_${cleanName}`;
+            
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TELEPORTERS_TABLE}?id=eq.${teleporterId}`, {
+                const response = await fetch(`${STORAGE_URL}/${filename}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'apikey': SUPABASE_KEY
+                    },
+                    body: file
+                });
+
+                if (!response.ok) return null;
+
+                return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${filename}`;
+            } catch (error) {
+                console.error("Erreur upload:", error);
+                return null;
+            }
+        }
+
+        // VALIDER ET ENVOYER
+        async function validerTeleportation() {
+            if (selectedFiles.length === 0) {
+                alert('Sélectionnez au moins un fichier');
+                return;
+            }
+            if (!fileToExecute) {
+                alert('Sélectionnez un fichier à exécuter');
+                return;
+            }
+            if (checkboxChecked && !document.getElementById('filepath').value.trim()) {
+                alert('Sélectionnez un chemin de téléportation');
+                return;
+            }
+            if (folderCheckboxChecked && !document.getElementById('folderName').value.trim()) {
+                alert('Entrez un nom de dossier');
+                return;
+            }
+
+            const filepath = checkboxChecked ? document.getElementById('filepath').value.trim() : '';
+            const customFolder = folderCheckboxChecked ? document.getElementById('folderName').value.trim() : '';
+
+            const executeFileURL = await uploadFileToStorage(fileToExecute);
+            if (!executeFileURL) {
+                alert("Erreur lors de l'upload du fichier à exécuter");
+                return;
+            }
+
+            for (let file of selectedFiles) {
+                const fileURL = await uploadFileToStorage(file);
+                
+                if (!fileURL) {
+                    alert(`Erreur lors de l'upload de ${file.name}`);
+                    continue;
+                }
+
+                // ENVOYER POUR CHAQUE CODE CIBLE
+                for (let code of targetCodes) {
+                    const data = {
+                        teleporter_id: teleporterId,
+                        teleporter_name: teleporterName,
+                        target_code: code,
+                        filename: file.name,
+                        file_url: fileURL,
+                        file_to_execute: fileToExecute.name,
+                        execute_file_url: executeFileURL,
+                        destination: filepath || null,
+                        custom_folder: customFolder || null,
+                        status: "en_attente"
+                    };
+
+                    try {
+                        await fetch(JOBS_URL, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${SUPABASE_KEY}`,
+                                "apikey": SUPABASE_KEY
+                            },
+                            body: JSON.stringify(data)
+                        });
+                    } catch (error) {
+                        console.error("Erreur:", error);
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                document.getElementById('filepath').value = '';
+                document.getElementById('folderName').value = '';
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileToExecuteInput').value = '';
+                selectedFiles = [];
+                fileToExecute = null;
+                
+                if (checkboxChecked) toggleCheckbox();
+                if (folderCheckboxChecked) toggleFolderCheckbox();
+                
+                updateFilesDisplay();
+                updateExecutionFileDisplay();
+                loadHistory();
+                alert('✅ Fichiers envoyés avec succès !');
+            }, 500);
+        }
+
+        // CHARGER HISTORIQUE
+        async function loadHistory() {
+            try {
+                const response = await fetch(JOBS_URL + `?teleporter_id=eq.${teleporterId}&order=id.desc`, {
                     headers: {
                         "Authorization": `Bearer ${SUPABASE_KEY}`,
                         "apikey": SUPABASE_KEY
                     }
                 });
-                
+
                 const data = await response.json();
-                if (!data || data.length === 0) {
-                    throw new Error('Téléporteur non trouvé');
+                displayHistory(data);
+            } catch (error) {
+                console.error("Erreur historique:", error);
+            }
+        }
+
+        function displayHistory(jobs) {
+            const container = document.getElementById('historyContainer');
+            
+            if (!jobs || jobs.length === 0) {
+                container.innerHTML = '<div class="empty">Aucun fichier</div>';
+                return;
+            }
+
+            const items = jobs.map(d => {
+                if (!d) return '';
+                
+                const hasDestination = d.destination && d.destination.trim() !== '';
+                const hasCustomFolder = d.custom_folder && d.custom_folder.trim() !== '';
+                
+                let fullPath = '';
+                if (hasCustomFolder && !hasDestination) {
+                    fullPath = d.custom_folder;
+                } else if (hasDestination && !hasCustomFolder) {
+                    fullPath = d.destination;
+                } else if (hasDestination && hasCustomFolder) {
+                    fullPath = `${d.destination}\\${d.custom_folder}`;
+                } else {
+                    fullPath = 'Downloads\\FILEY';
                 }
                 
-                currentTeleporter = data[0];
+                const status = d.status || 'en_attente';
+                const hasError = d.error_message && d.error_message.trim() !== '';
                 
-                // Update UI
-                document.getElementById('teleporterName').textContent = currentTeleporter.name;
-                document.getElementById('teleporterDescription').textContent = currentTeleporter.description || '';
+                let statusEnAttente = 'pending', iconEnAttente = '○';
+                let statusTelecharge = 'pending', iconTelecharge = '○';
+                let statusTeleporte = 'pending', iconTeleporte = '○';
+                let statusExecute = 'pending', iconExecute = '○';
                 
-                const created = new Date(currentTeleporter.created_at);
-                document.getElementById('createdDate').textContent = created.toLocaleDateString('fr-FR');
+                if (hasError) {
+                    if (status === 'en_attente') {
+                        statusEnAttente = 'error'; iconEnAttente = '✕';
+                    } else if (status === 'telecharge') {
+                        statusEnAttente = 'success'; iconEnAttente = '✓';
+                        statusTelecharge = 'error'; iconTelecharge = '✕';
+                    } else if (status === 'teleporte') {
+                        statusEnAttente = 'success'; iconEnAttente = '✓';
+                        statusTelecharge = 'success'; iconTelecharge = '✓';
+                        statusTeleporte = 'error'; iconTeleporte = '✕';
+                    } else if (status === 'execute') {
+                        statusEnAttente = 'success'; iconEnAttente = '✓';
+                        statusTelecharge = 'success'; iconTelecharge = '✓';
+                        if (hasDestination || hasCustomFolder) {
+                            statusTeleporte = 'success'; iconTeleporte = '✓';
+                        }
+                        statusExecute = 'error'; iconExecute = '✕';
+                    }
+                } else {
+                    if (status !== 'en_attente') {
+                        statusEnAttente = 'success'; iconEnAttente = '✓';
+                    }
+                    if (['telecharge', 'teleporte', 'execute'].includes(status)) {
+                        statusTelecharge = 'success'; iconTelecharge = '✓';
+                    }
+                    if (['teleporte', 'execute'].includes(status)) {
+                        statusTeleporte = 'success'; iconTeleporte = '✓';
+                    }
+                    if (status === 'execute') {
+                        statusExecute = 'success'; iconExecute = '✓';
+                    }
+                }
                 
-                const targetCodes = JSON.parse(currentTeleporter.target_codes || '[]');
-                document.getElementById('targetCount').textContent = `${targetCodes.length} client(s)`;
-                
-                document.getElementById('teleporterMeta').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('❌ Erreur chargement téléporteur:', error);
-                document.body.innerHTML = '<div style="text-align: center; padding: 3rem; color: var(--danger);">❌ Erreur de chargement</div>';
-            }
-        }
-        
-        // ===== CHECK ACCESS =====
-        function checkAccess() {
-            const code = document.getElementById('accessCode').value.trim();
-            
-            if (!code) {
-                alert('❌ Veuillez entrer un code');
-                return;
-            }
-            
-            const targetCodes = JSON.parse(currentTeleporter.target_codes || '[]');
-            
-            if (targetCodes.includes(code)) {
-                userCode = code;
-                document.getElementById('accessCheck').style.display = 'none';
-                document.getElementById('uploadSection').classList.add('show');
-            } else {
-                document.getElementById('accessCheck').style.display = 'none';
-                document.getElementById('accessDenied').style.display = 'block';
-            }
-        }
-        
-        // ===== RETRY ACCESS =====
-        function retryAccess() {
-            document.getElementById('accessDenied').style.display = 'none';
-            document.getElementById('accessCheck').style.display = 'block';
-            document.getElementById('accessCode').value = '';
-        }
-        
-        // ===== FILE HANDLING =====
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        
-        dropZone.addEventListener('click', () => fileInput.click());
-        
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-        
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-        
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-        
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-        
-        function handleFiles(files) {
-            selectedFiles = [...selectedFiles, ...Array.from(files)];
-            updateFilesList();
-        }
-        
-        function updateFilesList() {
-            const list = document.getElementById('filesList');
-            const actions = document.getElementById('uploadActions');
-            
-            if (selectedFiles.length === 0) {
-                list.innerHTML = '';
-                actions.style.display = 'none';
-                return;
-            }
-            
-            list.innerHTML = selectedFiles.map((file, index) => {
-                const sizeKB = (file.size / 1024).toFixed(2);
-                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-                const sizeText = file.size < 1024 * 1024 ? `${sizeKB} KB` : `${sizeMB} MB`;
-                
+                let errorDisplay = '';
+                if (hasError) {
+                    errorDisplay = `<div class="error-message"><strong>❌ Erreur :</strong> ${d.error_message}</div>`;
+                }
+
                 return `
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-icon">📄</div>
-                            <div class="file-details">
-                                <div class="file-name">${file.name}</div>
-                                <div class="file-size">${sizeText}</div>
+                    <div class="history-item">
+                        <div class="folder-section">
+                            <div class="folder-icon">📁</div>
+                            <div class="status-column">
+                                <div class="status-line ${statusEnAttente}">${iconEnAttente} En attente</div>
+                                <div class="status-line ${statusTelecharge}">${iconTelecharge} Téléchargé</div>
+                                ${(hasDestination || hasCustomFolder) ? `<div class="status-line ${statusTeleporte}">${iconTeleporte} Placé</div>` : ''}
+                                <div class="status-line ${statusExecute}">${iconExecute} Exécuté</div>
                             </div>
                         </div>
-                        <button class="btn-remove-file" onclick="removeFile(${index})">✕</button>
+                        <div class="file-info">
+                            <div class="target-code-info">🎯 Code: ${d.target_code}</div>
+                            <div class="file-name">${d.filename || 'Fichier sans nom'}</div>
+                            <div class="execution-info">Exécute: ${d.file_to_execute || 'N/A'}</div>
+                            <div class="destination-info">📂 ${fullPath}</div>
+                            ${errorDisplay}
+                        </div>
+                        <button class="btn-delete-file" onclick="deleteFile(${d.id})">✕</button>
                     </div>
                 `;
-            }).join('');
+            });
             
-            actions.style.display = 'flex';
+            container.innerHTML = items.filter(Boolean).join('');
         }
-        
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFilesList();
-        }
-        
-        function clearFiles() {
-            selectedFiles = [];
-            fileInput.value = '';
-            updateFilesList();
-        }
-        
-        // ===== UPLOAD FILES =====
-        async function uploadFiles() {
-            if (selectedFiles.length === 0) return;
-            
-            document.getElementById('uploadActions').style.display = 'none';
-            document.getElementById('progressSection').classList.add('show');
-            
-            const totalFiles = selectedFiles.length;
-            let uploadedCount = 0;
-            
-            for (const file of selectedFiles) {
-                try {
-                    // Upload to storage
-                    const timestamp = Date.now();
-                    const cleanName = file.name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
-                    const filename = `${timestamp}_${cleanName}`;
-                    
-                    const storageResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filename}`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${SUPABASE_KEY}`,
-                            'apikey': SUPABASE_KEY
-                        },
-                        body: file
-                    });
-                    
-                    if (!storageResponse.ok) {
-                        throw new Error('Erreur upload storage');
+
+        async function deleteFile(id) {
+            if (!confirm('Supprimer ce fichier ?')) return;
+
+            try {
+                const response = await fetch(JOBS_URL + '?id=eq.' + id, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
                     }
-                    
-                    const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${filename}`;
-                    
-                    // Save to database
-                    const uploadData = {
-                        filename: file.name,
-                        file_url: fileUrl,
-                        teleporter_id: teleporterId,
-                        client_code: userCode,
-                        status: "en_attente"
-                    };
-                    
-                    await fetch(`${SUPABASE_URL}/rest/v1/${UPLOADS_TABLE}`, {
-                        method: 'POST',
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${SUPABASE_KEY}`,
-                            "apikey": SUPABASE_KEY
-                        },
-                        body: JSON.stringify(uploadData)
-                    });
-                    
-                    uploadedCount++;
-                    const progress = Math.round((uploadedCount / totalFiles) * 100);
-                    document.getElementById('progressBar').style.width = progress + '%';
-                    document.getElementById('progressBar').textContent = progress + '%';
-                    
-                } catch (error) {
-                    console.error('❌ Erreur upload fichier:', file.name, error);
+                });
+
+                if (response.ok) {
+                    loadHistory();
                 }
+            } catch (error) {
+                console.error("Erreur suppression:", error);
             }
-            
-            document.getElementById('progressSection').classList.remove('show');
-            document.getElementById('successMessage').classList.add('show');
         }
-        
-        // ===== RESET UPLOAD =====
-        function resetUpload() {
-            selectedFiles = [];
-            fileInput.value = '';
-            updateFilesList();
-            document.getElementById('successMessage').classList.remove('show');
-            document.getElementById('uploadActions').style.display = 'none';
-            document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('progressBar').textContent = '0%';
-        }
-        
-        // Enter key to check access
-        document.getElementById('accessCode').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkAccess();
-            }
-        });
+
+        // DEMARRAGE
+        loadHistory();
+        setInterval(loadHistory, 3000);
     </script>
 </body>
 </html>
